@@ -40,7 +40,7 @@ const SignUpScreen = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      
+
       await sendEmailVerification(user);
       alert('Verification email sent! Please check your inbox.');
       router.push('/verification');
@@ -60,116 +60,137 @@ const SignUpScreen = () => {
     }
   };
 
-  return (  
-    <SafeAreaView style={styles.container}>
-      <View style={styles.form}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Welcome,</Text>
-          <Text style={styles.subtitle}>sign up to continue</Text>
-        </View>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={(text) => {
-            setEmail(text);
-            setError('');
-          }}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            setError('');
-          }}
-          secureTextEntry
-        />
+  const handleSignInWithDifferentEmail = () => {
+    setEmail('');
+    setPassword('');
+    router.push('/SignInScreen');
+  };
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
+  return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.form}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Welcome,</Text>
+            <Text style={styles.subtitle}>sign up to continue</Text>
+          </View>
 
-        <View style={styles.loginWith}>
-          {[0, 1, 2].map((index) => (
-            <TouchableOpacity 
-              activeOpacity={1}
-              key={index}
+          <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setError('');
+              }}
+              keyboardType="email-address"
+              autoCapitalize="none"
+          />
+
+          <TextInput
+              style={styles.input}
+              placeholder="Password"
+              value={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                setError('');
+              }}
+              secureTextEntry
+          />
+
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          <View style={styles.loginWith}>
+            {[0, 1, 2].map((index) => (
+                <TouchableOpacity
+                    activeOpacity={1}
+                    key={index}
+                    style={[
+                      styles.buttonLog,
+                      socialButtonsPressed[index] && styles.buttonPressed
+                    ]}
+                    onPressIn={() => {
+                      const newPressed = [...socialButtonsPressed];
+                      newPressed[index] = true;
+                      setSocialButtonsPressed(newPressed);
+                    }}
+                    onPressOut={() => {
+                      const newPressed = [...socialButtonsPressed];
+                      newPressed[index] = false;
+                      setSocialButtonsPressed(newPressed);
+                    }}
+                >
+                  {index === 0 ? (
+                      <Text style={styles.buttonLogText}>t</Text>
+                  ) : index === 1 ? (
+                      <Ionicons name="logo-google" size={24} color="black" />
+                  ) : (
+                      <Ionicons name="logo-facebook" size={24} color="black" />
+                  )}
+                </TouchableOpacity>
+            ))}
+          </View>
+
+          <TouchableOpacity
               style={[
-                styles.buttonLog,
-                socialButtonsPressed[index] && styles.buttonPressed
+                styles.buttonConfirm,
+                confirmButtonPressed && styles.buttonPressed
               ]}
-              onPressIn={() => {
-                const newPressed = [...socialButtonsPressed];
-                newPressed[index] = true;
-                setSocialButtonsPressed(newPressed);
-              }}
+              onPressIn={signUp}
               onPressOut={() => {
-                const newPressed = [...socialButtonsPressed];
-                newPressed[index] = false;
-                setSocialButtonsPressed(newPressed);
+                setConfirmButtonPressed(false);
               }}
-            >
-              {index === 0 ? (
-                <Text style={styles.buttonLogText}>t</Text>
-              ) : index === 1 ? (
-                <Ionicons name="logo-google" size={24} color="black" />
-              ) : (
-                <Ionicons name="logo-facebook" size={24} color="black" />
-              )}
-            </TouchableOpacity>
-          ))}
+              activeOpacity={1}
+              disabled={loading}
+          >
+            <Text style={styles.buttonConfirmText}>
+              {loading ? 'Creating Account...' : 'Sign Up'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={[
+                styles.buttonConfirm,
+                confirmButtonPressed && styles.buttonPressed
+              ]}
+              onPressIn={() => router.push('./explore')}
+              onPressOut={() => {
+                setConfirmButtonPressed(false);
+              }}
+              activeOpacity={1}
+          >
+            <Text style={styles.buttonConfirmText}>enter app test</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={[
+                styles.buttonConfirm,
+                confirmButtonPressed && styles.buttonPressed
+              ]}
+              onPressIn={() => router.push('/SignInScreen')}
+              onPressOut={() => {
+                setConfirmButtonPressed(false);
+              }}
+              activeOpacity={1}
+          >
+            <Text style={styles.buttonConfirmText}>Already have an account? Sign in</Text>
+          </TouchableOpacity>
+
+          {/* New Button for Sign In with a different email */}
+          <TouchableOpacity
+              style={[
+                styles.buttonConfirm,
+                confirmButtonPressed && styles.buttonPressed
+              ]}
+              onPressIn={handleSignInWithDifferentEmail}
+              onPressOut={() => {
+                setConfirmButtonPressed(false);
+              }}
+              activeOpacity={1}
+          >
+            <Text style={styles.buttonConfirmText}>Sign in with a different email</Text>
+          </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={[
-            styles.buttonConfirm,
-            confirmButtonPressed && styles.buttonPressed
-          ]}
-          onPressIn={signUp}
-          onPressOut={() => {
-            setConfirmButtonPressed(false);
-          }}
-          activeOpacity={1}
-          disabled={loading}
-        >
-          <Text style={styles.buttonConfirmText}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.buttonConfirm,
-            confirmButtonPressed && styles.buttonPressed
-          ]}
-          onPressIn={() => router.push('./explore')}
-          onPressOut={() => {
-            setConfirmButtonPressed(false);
-          }}
-          activeOpacity={1}
-        >
-          <Text style={styles.buttonConfirmText}>enter app test</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.buttonConfirm,
-            confirmButtonPressed && styles.buttonPressed
-          ]}
-          onPressIn={() => router.push('/SignInScreen')}
-          onPressOut={() => {
-            setConfirmButtonPressed(false);
-          }}
-          activeOpacity={1}
-        >
-          <Text style={styles.buttonConfirmText}>Already have an account? Sign in</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 };
 

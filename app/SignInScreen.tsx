@@ -11,6 +11,7 @@ const SignInScreen = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [confirmButtonPressed, setConfirmButtonPressed] = useState(false);
+  const [isDifferentEmail, setIsDifferentEmail] = useState(false);
   const auth = FIREBASE_AUTH;
 
   useEffect(() => {
@@ -63,28 +64,56 @@ const SignInScreen = () => {
             <Text style={styles.subtitle}>sign in to continue</Text>
           </View>
 
-          <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
-                setError('');
-              }}
-              keyboardType="email-address"
-              autoCapitalize="none"
-          />
+          {!isDifferentEmail ? (
+              <>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      setError('');
+                    }}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
 
-          <TextInput
-              style={styles.input}
-              placeholder="Password"
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-                setError('');
-              }}
-              secureTextEntry
-          />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={(text) => {
+                      setPassword(text);
+                      setError('');
+                    }}
+                    secureTextEntry
+                />
+              </>
+          ) : (
+              <>
+                <TextInput
+                    style={styles.input}
+                    placeholder="New Email"
+                    value={email}
+                    onChangeText={(text) => {
+                      setEmail(text);
+                      setError('');
+                    }}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="New Password"
+                    value={password}
+                    onChangeText={(text) => {
+                      setPassword(text);
+                      setError('');
+                    }}
+                    secureTextEntry
+                />
+              </>
+          )}
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -101,6 +130,15 @@ const SignInScreen = () => {
               disabled={loading}
           >
             <Text style={styles.buttonConfirmText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+              style={styles.differentEmailLink}
+              onPress={() => setIsDifferentEmail(!isDifferentEmail)} // Toggle between original and different email
+          >
+            <Text style={styles.differentEmailText}>
+              {isDifferentEmail ? 'Use original email' : 'Sign in with a different email'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -203,6 +241,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontFamily: 'Space Mono',
     textAlign: 'center',
+  },
+  differentEmailLink: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  differentEmailText: {
+    color: 'beige',
+    fontFamily: 'Space Mono',
+    fontSize: 14,
   },
   signUpLink: {
     marginTop: 20,
